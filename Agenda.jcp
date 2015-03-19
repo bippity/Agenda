@@ -50,6 +50,14 @@
 				<folder>classes</folder>
 			</fileitem>
 			<fileitem>
+				<path>src\Agenda.java</path>
+				<folder>src</folder>
+			</fileitem>
+			<fileitem>
+				<path>src\AgendaOLD.java</path>
+				<folder>src</folder>
+			</fileitem>
+			<fileitem>
 				<path>src\Database.java</path>
 				<folder>src</folder>
 			</fileitem>
@@ -59,10 +67,6 @@
 			</fileitem>
 			<fileitem>
 				<path>src\LoginFrame.java</path>
-				<folder>src</folder>
-			</fileitem>
-			<fileitem>
-				<path>src\main.java</path>
 				<folder>src</folder>
 			</fileitem>
 			<fileitem>
@@ -78,11 +82,6 @@
 				<folder>bin\classes</folder>
 			</fileitem>
 		</include>
-		<exclude>
-			<fileitem>
-				<path>src\Agenda.java</path>
-			</fileitem>
-		</exclude>
 	</files>
 	<tasks/>
 </project>

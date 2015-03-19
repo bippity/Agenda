@@ -72,8 +72,7 @@ public class LoginFrame extends JFrame implements ActionListener
 					{
 						if (user.Pass.equals(pass.getText())) //if pass matches, start main frame
 						{
-							MainFrame main = new MainFrame(user);
-							dispose();
+							login(user);
 							//c.close();
 						}
 						else
@@ -88,7 +87,7 @@ public class LoginFrame extends JFrame implements ActionListener
 				}
 			}
 		}
-		else if (b.equals(newButton))
+		else if (b.equals(newButton)) //create new account Button
 		{
 			if (username.getText().isEmpty() || pass.getText().isEmpty())
 			{
@@ -98,16 +97,24 @@ public class LoginFrame extends JFrame implements ActionListener
 			}
 			else 
 			{
-				User user = new User(0, username.getText(), pass.getText(), null);
-
-				if (dbManager.getUserByName(user.Name)== null)
+				int choice = JOptionPane.showConfirmDialog(getRootPane(), "Are you sure?", "Confirm Account", JOptionPane.INFORMATION_MESSAGE);
+				
+				if (choice == JOptionPane.YES_OPTION)
 				{
-					dbManager.AddUser(user);
-				}
-				else 
-				{
-					JOptionPane.showMessageDialog(getRootPane(), "Username \"" + username.getText() + "\" already exists!", "Login Fail", 
-							JOptionPane.ERROR_MESSAGE);
+					User user = new User(0, username.getText(), pass.getText(), null);
+	
+					if (dbManager.getUserByName(user.Name)== null)
+					{
+						dbManager.AddUser(user);
+						JOptionPane.showMessageDialog(getRootPane(), "User: " + user.Name + "\nPass: " + user.Pass, "Account Created",
+								JOptionPane.INFORMATION_MESSAGE);
+						login(user);
+					}
+					else 
+					{
+						JOptionPane.showMessageDialog(getRootPane(), "Username \"" + username.getText() + "\" already exists!", "Login Fail", 
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		}
@@ -126,5 +133,11 @@ public class LoginFrame extends JFrame implements ActionListener
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
+	}
+	
+	public void login(User user)
+	{
+		MainFrame main = new MainFrame(user);
+		dispose();
 	}
 }
