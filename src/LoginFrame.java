@@ -108,7 +108,14 @@ public class LoginFrame extends JFrame implements ActionListener
 						dbManager.AddUser(user);
 						JOptionPane.showMessageDialog(getRootPane(), "User: " + user.Name + "\nPass: " + user.Pass, "Account Created",
 								JOptionPane.INFORMATION_MESSAGE);
-						login(user);
+						try
+						{
+							login(user);
+						}
+						catch (Exception ex)
+						{
+							System.out.println (ex.getMessage());
+						}
 					}
 					else 
 					{
@@ -135,9 +142,10 @@ public class LoginFrame extends JFrame implements ActionListener
 		}
 	}
 	
-	public void login(User user)
+	public void login(User user) throws SQLException
 	{
 		MainFrame main = new MainFrame(user);
 		dispose();
+		c.close();
 	}
 }

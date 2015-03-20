@@ -2,11 +2,12 @@
 class Category 
 {
 	public int ID;
-	public String Name, TabID;
+	public String Owner, Name, TabID;
 	
-	public Category(int id, String name, String tabID)
+	public Category(int id, String owner, String name, String tabID)
 	{
 		ID = id;
+		Owner = owner;
 		Name = name;
 		TabID = tabID;
 	}

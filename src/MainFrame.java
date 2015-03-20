@@ -16,10 +16,11 @@ public class MainFrame extends JFrame implements ActionListener
 	
 	public JTextField categoryInput;
 	public JTextField tabInput;
-	private JPanel main = new JPanel();
+	private JPanel leftPanel = new JPanel();
+	private JPanel rightPanel = new JPanel();
 	private JButton catButton = new JButton("Create Category");
 	private JButton tabButton = new JButton("Create Tab");
-	
+	private JComboBox<Category> categories = new JComboBox<Category>();
 	public MainFrame(User u)
 	{
 		user = u;
@@ -29,14 +30,21 @@ public class MainFrame extends JFrame implements ActionListener
 		setSize(1000, 500);
 		setTitle("Agenda");
 		
-		categoryInput = new JTextField("To-Do");
+		ArrayList<Category> catList = dbManager.getCategories();
+		for (Category c : catList)
+		{
+			categories.addItem(c);
+		}
 		
-		add(main);
-		
+		add(leftPanel, BorderLayout.WEST);
 		JLabel label = new JLabel("Category");
-		main.add(label);
-		main.add(categoryInput);
-		main.add(catButton);
+		categoryInput = new JTextField("To-Do");
+		leftPanel.add(label, BorderLayout.NORTH);
+		leftPanel.add(categoryInput);
+		leftPanel.add(catButton);
+		leftPanel.add(categories);
+		
+		add(rightPanel, BorderLayout.EAST);
 		
 		catButton.addActionListener(this);
 		
