@@ -33,25 +33,13 @@
 			<path>src\MainFrame.java</path>
 			<source>true</source>
 			<index>0</index>
-			<active>false</active>
-		</docitem>
-		<docitem>
-			<path>src\Entries.java</path>
-			<source>true</source>
-			<index>1</index>
-			<active>false</active>
-		</docitem>
-		<docitem>
-			<path>src\Database.java</path>
-			<source>true</source>
-			<index>2</index>
-			<active>false</active>
+			<active>true</active>
 		</docitem>
 		<docitem>
 			<path>src\LoginFrame.java</path>
 			<source>true</source>
-			<index>3</index>
-			<active>true</active>
+			<index>1</index>
+			<active>false</active>
 		</docitem>
 	</open_files>
 </workspace_user>

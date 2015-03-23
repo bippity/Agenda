@@ -171,12 +171,14 @@ public class Database
 		return user;
 	}
 	
-	public ArrayList<Category> getCategories()
+	//loads and returns the categories of the user
+	public ArrayList<Category> getCategories(User user)
 	{
 		ArrayList<Category> list = new ArrayList<Category>();
 		try
 		{
-			ResultSet rs = db.executeQuery("SELECT * FROM Categories;");
+			String sql = MessageFormat.format("SELECT * FROM Categories WHERE Owner=\"{0}\";", user.Name);
+			ResultSet rs = db.executeQuery(sql);
 			
 			while (rs.next())
 			{

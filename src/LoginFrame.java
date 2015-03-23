@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -38,6 +39,8 @@ public class LoginFrame extends JFrame implements ActionListener
 		inputPanel.add(new JLabel("Pass: "));
 		inputPanel.add(pass);
 		
+		username.addActionListener(this);
+		pass.addActionListener(this);
 		loginButton.addActionListener(this);
 		newButton.addActionListener(this);
 		
@@ -47,47 +50,9 @@ public class LoginFrame extends JFrame implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		JButton b = (JButton)e.getSource();
+		//JButton b = (JButton)e.getSource();
 		
-		if (b.equals(loginButton))
-		{
-			if (username.getText().isEmpty() || pass.getText().isEmpty())
-			{
-				JOptionPane.showMessageDialog(getRootPane(), "Username and Password cannot be empty!", "Login Fail", 
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			else 
-			{
-				try
-				{
-					User user = dbManager.getUserByName(username.getText());
-					if (user == null)
-					{
-						JOptionPane.showMessageDialog(getRootPane(), "Username does not exist!", "Login Fail", 
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					else //username exists
-					{
-						if (user.Pass.equals(pass.getText())) //if pass matches, start main frame
-						{
-							login(user);
-							//c.close();
-						}
-						else
-							JOptionPane.showMessageDialog(getRootPane(), "Incorrect Password!", "Login Fail", 
-									JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				catch (Exception ex)
-				{
-					System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-		    		System.exit(0);
-				}
-			}
-		}
-		else if (b.equals(newButton)) //create new account Button
+		if (newButton.equals(e.getSource())) //create new account Button
 		{
 			if (username.getText().isEmpty() || pass.getText().isEmpty())
 			{
@@ -122,6 +87,44 @@ public class LoginFrame extends JFrame implements ActionListener
 						JOptionPane.showMessageDialog(getRootPane(), "Username \"" + username.getText() + "\" already exists!", "Login Fail", 
 								JOptionPane.ERROR_MESSAGE);
 					}
+				}
+			}
+		}
+		else //assume it's a login
+		{
+			if (username.getText().isEmpty() || pass.getText().isEmpty())
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "Username and Password cannot be empty!", "Login Fail", 
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			else 
+			{
+				try
+				{
+					User user = dbManager.getUserByName(username.getText());
+					if (user == null)
+					{
+						JOptionPane.showMessageDialog(getRootPane(), "Username does not exist!", "Login Fail", 
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					else //username exists
+					{
+						if (user.Pass.equals(pass.getText())) //if pass matches, start main frame
+						{
+							login(user);
+							//c.close();
+						}
+						else
+							JOptionPane.showMessageDialog(getRootPane(), "Incorrect Password!", "Login Fail", 
+									JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				catch (Exception ex)
+				{
+					System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+		    		System.exit(0);
 				}
 			}
 		}
