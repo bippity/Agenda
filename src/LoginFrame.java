@@ -29,7 +29,9 @@ public class LoginFrame extends JFrame implements ActionListener
 		setTitle("Agenda -Login-");
 		
 		add(southPanel, BorderLayout.SOUTH);
+		loginButton.setForeground(new Color(0, 145, 45));
 		southPanel.add(loginButton, BorderLayout.WEST);
+		newButton.setForeground(Color.blue);
 		southPanel.add(newButton, BorderLayout.EAST);
 		
 		inputPanel.setLayout(new GridLayout(4,2));
@@ -50,13 +52,14 @@ public class LoginFrame extends JFrame implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		//JButton b = (JButton)e.getSource();
-		
 		if (newButton.equals(e.getSource())) //create new account Button
 		{
 			if (username.getText().isEmpty() || pass.getText().isEmpty())
 			{
-				JOptionPane.showMessageDialog(getRootPane(), "Username \"" + username.getText() + "\" already exists!", "Login Fail", 
+				username.setBackground(Color.pink);
+				pass.setBackground(Color.pink);
+				
+				JOptionPane.showMessageDialog(getRootPane(), "Username and Password cannot be empty!", "Login Fail", 
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -84,6 +87,9 @@ public class LoginFrame extends JFrame implements ActionListener
 					}
 					else 
 					{
+						username.setBackground(Color.pink);
+						pass.setBackground(Color.white);
+						
 						JOptionPane.showMessageDialog(getRootPane(), "Username \"" + username.getText() + "\" already exists!", "Login Fail", 
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -94,6 +100,9 @@ public class LoginFrame extends JFrame implements ActionListener
 		{
 			if (username.getText().isEmpty() || pass.getText().isEmpty())
 			{
+				username.setBackground(Color.pink);
+				pass.setBackground(Color.pink);
+				
 				JOptionPane.showMessageDialog(getRootPane(), "Username and Password cannot be empty!", "Login Fail", 
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -105,20 +114,27 @@ public class LoginFrame extends JFrame implements ActionListener
 					User user = dbManager.getUserByName(username.getText());
 					if (user == null)
 					{
+						username.setBackground(Color.pink);
+						pass.setBackground(Color.white);
+						
 						JOptionPane.showMessageDialog(getRootPane(), "Username does not exist!", "Login Fail", 
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					else //username exists
 					{
+						username.setBackground(Color.white);
 						if (user.Pass.equals(pass.getText())) //if pass matches, start main frame
 						{
 							login(user);
 							//c.close();
 						}
 						else
+						{
+							pass.setBackground(Color.pink);
 							JOptionPane.showMessageDialog(getRootPane(), "Incorrect Password!", "Login Fail", 
 									JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				}
 				catch (Exception ex)

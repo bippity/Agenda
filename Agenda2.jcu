@@ -23,9 +23,6 @@
 			<folderitem>
 				<path>bin\classes</path>
 			</folderitem>
-			<folderitem>
-				<path>.settings</path>
-			</folderitem>
 		</project>
 	</projects>
 	<open_files>
@@ -36,7 +33,7 @@
 			<active>true</active>
 		</docitem>
 		<docitem>
-			<path>src\LoginFrame.java</path>
+			<path>src\Database.java</path>
 			<source>true</source>
 			<index>1</index>
 			<active>false</active>

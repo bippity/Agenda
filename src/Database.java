@@ -148,7 +148,6 @@ public class Database
 		
 		try 
 		{
-			System.out.println ("getting resultset");
 			ResultSet rs = db.executeQuery(sql);
 			System.out.println (rs.getString("Name"));
 			user = LoadUserFromResult(user, rs); //ResultSet is closed error
@@ -164,8 +163,8 @@ public class Database
 	
 	private User LoadUserFromResult(User user, ResultSet result) throws SQLException
 	{
-		user.ID = result.getInt("ID"); //might have to change to 1 instead of "ID"
-		user.Pass = result.getString("Password"); //3
+		user.ID = result.getInt("ID");
+		user.Pass = result.getString("Password");
 		user.catID = result.getString("CatID");
 		
 		return user;
@@ -188,6 +187,34 @@ public class Database
 				String tabID = rs.getString("TabID");
 				
 				list.add(new Category(id, owner, name, tabID));
+			}
+			rs.close();
+		}
+		catch (Exception e)
+		{
+			System.out.println (e.getMessage());
+		}
+		return list;
+	}
+	
+	public ArrayList<Tab> getTabs(User user)
+	{
+		ArrayList<Tab> list = new ArrayList<Tab>();
+		
+		try
+		{
+			String sql = MessageFormat.format("SELECT * FROM Tabs WHERE Owner=\"{0}\";",  user.Name);
+			ResultSet rs = db.executeQuery(sql);
+			
+			while (rs.next())
+			{
+				int id = rs.getInt("ID");
+				String owner = rs.getString("Owner");
+				String category = rs.getString("Category");
+				String info = rs.getString("Info");
+				String date = rs.getString("Date");
+				
+				list.add(new Tab(id, owner, category, info, date));
 			}
 			rs.close();
 		}

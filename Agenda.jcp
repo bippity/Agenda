@@ -54,10 +54,6 @@
 				<folder>src</folder>
 			</fileitem>
 			<fileitem>
-				<path>src\AgendaOLD.java</path>
-				<folder>src</folder>
-			</fileitem>
-			<fileitem>
 				<path>src\Database.java</path>
 				<folder>src</folder>
 			</fileitem>

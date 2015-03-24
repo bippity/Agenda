@@ -16,11 +16,13 @@ class Category
 class Tab
 {
 	public int ID;
-	public String Info, Date;
+	public String Owner, Category, Info, Date;
 	
-	public Tab(int id, String info, String date)
+	public Tab(int id, String owner, String category, String info, String date)
 	{
 		ID = id;
+		Owner = owner;
+		Category = category;
 		Info = info;
 		Date = date;
 	}
