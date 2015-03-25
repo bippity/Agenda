@@ -1,3 +1,8 @@
+/**
+ * LoginFrame.java
+ * @author Alex Wang
+ */
+
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -7,7 +12,7 @@ import java.awt.Graphics;
 import java.sql.*;
 
 @SuppressWarnings({ "serial", "unused" })
-public class LoginFrame extends JFrame implements ActionListener
+public class LoginFrame extends JFrame implements ActionListener, KeyListener
 {
 	public JTextField username = new JTextField();
 	public JTextField pass = new JTextField();
@@ -19,10 +24,11 @@ public class LoginFrame extends JFrame implements ActionListener
 	private static Connection c;
 	private static Database dbManager;
 	
-	
+	/**
+	 * Constructor
+	 */
 	public LoginFrame()
 	{
-		//super("Agenda -Login-");
 		initiateDB();
 		
 		setSize(300,200);
@@ -42,14 +48,20 @@ public class LoginFrame extends JFrame implements ActionListener
 		inputPanel.add(pass);
 		
 		username.addActionListener(this);
+		username.addKeyListener(this);
 		pass.addActionListener(this);
+		pass.addKeyListener(this);
 		loginButton.addActionListener(this);
 		newButton.addActionListener(this);
+		
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
 	
+	/**
+	 * Listens to actions performed in the Frame
+	 */
 	public void actionPerformed(ActionEvent e)
 	{
 		if (newButton.equals(e.getSource())) //create new account Button
@@ -67,9 +79,9 @@ public class LoginFrame extends JFrame implements ActionListener
 			{
 				int choice = JOptionPane.showConfirmDialog(getRootPane(), "Are you sure?", "Confirm Account", JOptionPane.INFORMATION_MESSAGE);
 				
-				if (choice == JOptionPane.YES_OPTION)
+				if (choice == JOptionPane.YES_OPTION) //attempt to create an account
 				{
-					User user = new User(0, username.getText(), pass.getText(), null);
+					User user = new User(0, username.getText(), pass.getText());
 	
 					if (dbManager.getUserByName(user.Name)== null)
 					{
@@ -139,19 +151,22 @@ public class LoginFrame extends JFrame implements ActionListener
 				}
 				catch (Exception ex)
 				{
-					System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-		    		System.exit(0);
+					ex.printStackTrace();
+					System.err.println(ex.getClass().getName() + ": THISONE" + ex.getMessage());
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Connects to the Database, creates one if non-existant
+	 */
 	public static void initiateDB()
 	{
 		try
 		{
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:test.sqlite");
+			c = DriverManager.getConnection("jdbc:sqlite:agenda.sqlite");
 			dbManager = new Database(c);
 		}
 		catch (Exception e)
@@ -161,10 +176,32 @@ public class LoginFrame extends JFrame implements ActionListener
 		}
 	}
 	
+	/**
+	 * Logs the user into the Main Frame
+	 * @param user User to be logged in
+	 * @throws SQLException
+	 */
 	public void login(User user) throws SQLException
 	{
 		MainFrame main = new MainFrame(user);
 		dispose();
 		c.close();
+	}
+	
+	/**
+	 * Closes program when 'Esc' is pressed
+	 */
+	public void keyReleased(KeyEvent args)
+	{
+		if (args.getKeyCode() == 27)
+		{
+			System.exit(0);
+		}
+	}
+	public void keyPressed(KeyEvent args)
+	{
+	}
+	public void keyTyped(KeyEvent args)
+	{
 	}
 }

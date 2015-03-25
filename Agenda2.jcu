@@ -23,20 +23,42 @@
 			<folderitem>
 				<path>bin\classes</path>
 			</folderitem>
+			<fileitem>
+				<path>src\Database.java</path>
+				<collapsedfolds>0;0;0;0;0;0;0;0;0;258;232;202;189;176;145;115;102;89</collapsedfolds>
+			</fileitem>
 		</project>
 	</projects>
 	<open_files>
 		<docitem>
-			<path>src\MainFrame.java</path>
+			<path>src\Agenda.java</path>
 			<source>true</source>
 			<index>0</index>
-			<active>true</active>
+			<active>false</active>
+		</docitem>
+		<docitem>
+			<path>src\LoginFrame.java</path>
+			<source>true</source>
+			<index>1</index>
+			<active>false</active>
+		</docitem>
+		<docitem>
+			<path>src\Entries.java</path>
+			<source>true</source>
+			<index>2</index>
+			<active>false</active>
+		</docitem>
+		<docitem>
+			<path>src\MainFrame.java</path>
+			<source>true</source>
+			<index>3</index>
+			<active>false</active>
 		</docitem>
 		<docitem>
 			<path>src\Database.java</path>
 			<source>true</source>
-			<index>1</index>
-			<active>false</active>
+			<index>4</index>
+			<active>true</active>
 		</docitem>
 	</open_files>
 </workspace_user>

@@ -1,28 +1,34 @@
 
+/**
+ * Entries.java
+ * @author Alex
+ *
+ */
+
 class Category 
 {
 	public int ID;
-	public String Owner, Name, TabID;
+	public String Owner, Name;
 	
-	public Category(int id, String owner, String name, String tabID)
+	public Category(int id, String owner, String name)
 	{
 		ID = id;
 		Owner = owner;
 		Name = name;
-		TabID = tabID;
 	}
 }
 
 class Tab
 {
 	public int ID;
-	public String Owner, Category, Info, Date;
+	public int CatID;
+	public String Name, Info, Date;
 	
-	public Tab(int id, String owner, String category, String info, String date)
+	public Tab(int id, String name, int catID, String info, String date)
 	{
 		ID = id;
-		Owner = owner;
-		Category = category;
+		Name = name;
+		CatID = catID;
 		Info = info;
 		Date = date;
 	}
@@ -33,18 +39,11 @@ class User
 	public int ID;
 	public String Name;
 	public String Pass;
-	public String catID;
 	
-	public User(int id, String name, String password, String catIDs)
+	public User(int id, String name, String password)
 	{
 		ID = id;
 		Name = name;
 		Pass = password;
-		catID = catIDs;
-	}
-	
-	public String toString()
-	{
-		return "ID: " + ID + "\nName: " + Name + "\nPass: " + Pass + "\nCategory IDs: " + catID;
 	}
 }

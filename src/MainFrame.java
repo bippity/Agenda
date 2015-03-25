@@ -3,10 +3,14 @@ import javax.swing.border.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.Graphics;
 import java.util.*;
 import java.sql.*;
 
+/**
+ * MainFrame.java
+ * @author Alex
+ *
+ */
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame implements ActionListener
 {
@@ -27,20 +31,36 @@ public class MainFrame extends JFrame implements ActionListener
 	private JPanel rightEastPanel = new JPanel();
 	
 	private JPanel innerTabsPanel = new JPanel();
-	private JPanel tabInfo = new JPanel();
+	private JPanel tabDisplay = new JPanel();
 	
 	private JButton catButton = new JButton("Create Category");
 	private JButton tabButton = new JButton("Create Tab");
+	private JButton delCatButton = new JButton("Delete Category");
+	private JButton delTabButton = new JButton("Delete Tab");
+	private JButton saveButton = new JButton("Save");
 	private JButton logoutButton = new JButton("Logout");
+	
 	private JComboBox<String> categories = new JComboBox<String>();
 	private JComboBox<String> tabs = new JComboBox<String>();
 	
-	private JTextArea tabDisplay = new JTextArea(50, 20);
+	private JTextArea tabInfo = new JTextArea(50, 20);
 	
+	private Category currentCat;
+	private Tab currentTab;
+	
+	private ArrayList<Category> catList;
+	private ArrayList<Tab> tabList;
+	
+	private JLabel tabName = new JLabel("Tab Name: ");
+	private JLabel tabDate = new JLabel("Date Created: ");
+	
+	/**
+	 * Constructor
+	 * @param u User that logged in
+	 */
 	public MainFrame(User u)
 	{
 		user = u;
-		System.out.println(user.toString());
 		initiateDB();
 		update();
 		
@@ -59,8 +79,15 @@ public class MainFrame extends JFrame implements ActionListener
 		
 		leftCenterPanel.setLayout(new BorderLayout());
 		leftCenterPanel.setBorder(new TitledBorder("Controls"));
-		logoutButton.setForeground(new Color(190,0,0));
 		leftCenterPanel.add(logoutButton, BorderLayout.SOUTH);
+		JPanel innerControls = new JPanel(new BorderLayout());
+		leftCenterPanel.add(innerControls, BorderLayout.CENTER);
+		innerControls.add(delTabButton, BorderLayout.NORTH);
+		innerControls.add(saveButton, BorderLayout.SOUTH);
+		logoutButton.setForeground(new Color(190,0,0));
+		saveButton.setForeground(new Color(0, 145, 45));
+		leftCenterPanel.add(delCatButton, BorderLayout.NORTH);
+		
 		
 		
 		//leftSouthPanel.add(new JLabel("test"),BorderLayout.SOUTH);
@@ -70,12 +97,6 @@ public class MainFrame extends JFrame implements ActionListener
 		categoryInput = new JTextField("To-Do");
 		leftSouthPanel.add(categoryInput);
 		leftSouthPanel.add(catButton);
-		//leftSouthPanel.add(new JPanel()); //creates gap between creating category and tab
-//		leftSouthPanel.add(new JLabel("Tab Name"));
-//		
-//		tabInput = new JTextField("Finish HW");
-//		leftSouthPanel.add(tabInput);
-//		leftSouthPanel.add(tabButton);
 		
 		
 		add(rightPanel);
@@ -85,15 +106,15 @@ public class MainFrame extends JFrame implements ActionListener
 		rightPanel.add(rightEastPanel);
 		
 		rightEastPanel.setLayout(new BorderLayout());
-		rightEastPanel.setBorder(new TitledBorder("Displayed Tab"));
-		rightEastPanel.add(tabInfo, BorderLayout.NORTH);
-		rightEastPanel.add(tabDisplay);
+		//rightEastPanel.setBorder(new TitledBorder("Displayed Tab"));
+		rightEastPanel.add(tabDisplay, BorderLayout.NORTH);
+		rightEastPanel.add(tabInfo);
 		rightEastPanel.add(new JPanel(), BorderLayout.SOUTH);
 		
-		tabInfo.setLayout(new BorderLayout());
-		//tabInfo.setBorder(new TitledBorder("tabInfo"));
-		tabInfo.add(new JLabel("Tab ID: 1"), BorderLayout.WEST);
-		tabInfo.add(new JLabel("Date Created: 3/24/2015"), BorderLayout.EAST);
+		tabDisplay.setLayout(new BorderLayout());
+		//tabDisplay.setBorder(new TitledBorder("tabDisplay"));
+		tabDisplay.add(tabName, BorderLayout.WEST);
+		tabDisplay.add(tabDate, BorderLayout.EAST);
 		
 		rightWestPanel.setLayout(new BorderLayout());
 		rightWestPanel.setBorder(new TitledBorder("Tabs"));
@@ -107,34 +128,163 @@ public class MainFrame extends JFrame implements ActionListener
 		innerTabsPanel.add(tabInput);
 		innerTabsPanel.add(tabButton);
 		
-		//rightPanel.add(new JTextField("Blah", 20));
 		
+		categories.addActionListener(this);
+		tabs.addActionListener(this);
 		catButton.addActionListener(this);
+		delCatButton.addActionListener(this);
 		tabButton.addActionListener(this);
+		delTabButton.addActionListener(this);
+		saveButton.addActionListener(this);
 		logoutButton.addActionListener(this);
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
 	
+	/**
+	 * Listens to actions performed
+	 */
 	public void actionPerformed(ActionEvent e)
 	{
-		if (e.getSource().equals(catButton))
+		if (e.getSource().equals(catButton)) //create Category button
 		{
+			if (categoryInput.getText().isEmpty())
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "You must give your category a name!", "Error", 
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			Category cat = new Category(0, user.Name, categoryInput.getText());
+			
+			if (dbManager.getCategoryByName(cat.Name, user) == null)
+			{
+				try
+				{
+					dbManager.InsertCategory(user, cat);
+					update();
+				}
+				catch (Exception ex)
+				{
+					System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+				}
+			}
+			else 
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "Category \"" + categoryInput.getText() + "\" already exists!", "Existing Category", 
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getSource().equals(delCatButton))
+		{
+			if (currentCat == null)
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "There is no category to delete.", "Error", 
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			try
 			{
-				dbManager.InsertCategory(user, categoryInput.getText());
+				JOptionPane.showMessageDialog(getRootPane(), "Category \"" + currentCat.Name + "\" has been deleted!", "Category Deleted",
+						JOptionPane.INFORMATION_MESSAGE);
+				dbManager.deleteCategory(currentCat);
 				update();
 			}
 			catch (Exception ex)
 			{
-				System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-				System.exit(0);
+				System.out.println(ex.getMessage());
 			}
 		}
 		else if (e.getSource().equals(tabButton))
 		{
+			if (currentCat == null) //if a category doesn't exist
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "You must create a category first!", "Error", 
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			else if (tabInput.getText().isEmpty())
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "You must give your tab a name!", "Error", 
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			
+			Tab tab = new Tab(0, tabInput.getText(), currentCat.ID, null, null);
+			if (dbManager.getTabByName(tab.Name, tab.CatID) == null)
+			{
+				try
+				{
+					dbManager.InsertTab(tabInput.getText(), tab.CatID);
+					update();
+				}
+				catch (Exception ex)
+				{
+					System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+				}
+			}
+			else 
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "Tab \"" + tabInput.getText() + "\" already exists!", "Existing Tab", 
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getSource().equals(delTabButton))
+		{
+			if (currentTab == null)
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "There is no tab to delete.", "Error", 
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			try
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "Tab \"" + currentTab.Name + "\" has been deleted!", "Tab Deleted", JOptionPane.INFORMATION_MESSAGE);
+				dbManager.deleteTab(currentTab);
+				update();
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+				System.out.println(ex.getMessage());
+			}
+		}
+		else if (e.getSource().equals(categories))
+		{
+			String name = (String)categories.getSelectedItem();
+			for (Category c : catList)
+			{
+				if (c.Name.equals(name))
+				{
+					currentCat = c;
+					update();
+					return;
+				}
+			}
+		}
+		else if (e.getSource().equals(tabs))
+		{
+			String name = (String)tabs.getSelectedItem();
+			for (Tab t : tabList)
+			{
+				if (t.Name.equals(name))
+				{
+					currentTab = t;
+					update();
+					return;
+				}
+			}
+		}
+		else if (e.getSource().equals(saveButton))
+		{
+			if (currentTab == null)
+			{
+				JOptionPane.showMessageDialog(getRootPane(), "A tab must be opened/created before saving!", "Error", 
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			dbManager.saveTab(currentTab, tabInfo.getText());
+			JOptionPane.showMessageDialog(getRootPane(), "Tab \"" + currentTab.Name + "\" has been saved!", "Tab Saved",
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 		else if (e.getSource().equals(logoutButton))
 		{
@@ -147,7 +297,7 @@ public class MainFrame extends JFrame implements ActionListener
 		try
 		{
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:test.sqlite");
+			c = DriverManager.getConnection("jdbc:sqlite:agenda.sqlite");
 			dbManager = new Database(c);
 		}
 		catch (Exception e)
@@ -160,23 +310,58 @@ public class MainFrame extends JFrame implements ActionListener
 	public void update() //refreshes the tables/display
 	{
 		categories.removeAllItems();
-		ArrayList<Category> catList = dbManager.getCategories(user);
+		catList = dbManager.getCategories(user);
 		for (Category c : catList)
 		{
 			categories.addItem(c.Name);
 		}
 		
+		if (!catList.isEmpty())
+		{
+			if (currentCat == null)
+			{
+				currentCat = catList.get(0);
+			}
+			else
+			{
+				categories.setSelectedItem(currentCat.Name);
+			}
+		}
+		else
+		{
+			currentCat = null;
+		}
+		
 		tabs.removeAllItems();
-		ArrayList<Tab> tabList = dbManager.getTabs(user);
+		tabList = dbManager.getTabs(currentCat);
 		for (Tab t : tabList)
 		{
-			String info = t.Info;
-			if (info.length() > 10)
-				info = info.substring(0,9);
-			tabs.addItem(info);
+			tabs.addItem(t.Name);
+		}
+		
+		if (!tabList.isEmpty())
+		{
+			if (currentTab == null)
+			{
+				currentTab = tabList.get(0);
+			}
+			else 
+			{
+				tabs.setSelectedItem(currentTab.Name);
+			}
+			tabName.setText("Tab Name: " + currentTab.Name);
+			tabDate.setText("Date Created: " + currentTab.Date);
+			tabInfo.setText(currentTab.Info);
+		}
+		else 
+		{
+			currentTab = null;
 		}
 	}
 	
+	/**
+	 * Returns the user back to the LoginFrame
+	 */
 	public void logout()
 	{
 		try
@@ -185,6 +370,7 @@ public class MainFrame extends JFrame implements ActionListener
 			
 			if (choice == JOptionPane.YES_OPTION)
 			{
+				@SuppressWarnings("unused")
 				LoginFrame main = new LoginFrame();
 				dispose();
 				c.close();
